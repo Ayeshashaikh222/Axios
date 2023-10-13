@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+
+<body>
+
+    <form onsubmit="myfun(event)">
+        <label for="">Name:</label>
+        <input type="text" id="fullname" name="username">
+        <label for="">Email ID:</label>
+        <input type="email" id="email" name="useremail">
+        <label for="">Phone:</label>
+        <input type="number" id="phone" name="userphone">
+
+        <button id="button">submit</button>
+    </form>
+    <ul id="itemList"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+    <script>
+
+        window.addEventListener("DOMContentLoaded", () => {
+            axios.get("https://crudcrud.com/api/c2459a51b89f4f748b9fa88d104b7f80/appointmentData")
+                .then((response) => {
+                    console.log(response)
+
+                    for (var i = 1; i < response.data.length; i++) {
+                        showUserOnScreen(response.data[i]);
+                    }
+                })
+                .catch((error) => {
+                    document.body.innerHTML = document.body.innerHTML + "<h4> Something went wrong </h4>"
+                });
+        });
+
+
+        function myfun(event) {
+            event.preventDefault();
+
+            const name = event.target.username.value;
+            const email = event.target.useremail.value;
+            const phone = event.target.userphone.value;
+
+            const obj = {
+                name,
+                email,
+                phone
+
+            }
+
+            axios.post("https://crudcrud.com/api/c2459a51b89f4f748b9fa88d104b7f80/appointmentData", obj)
+                .then((response) => {
+                    showUserOnScreen(response.data)
+                    console.log(response)
+                })
+                .catch((error) => {
+                    document.body.innerHTML = document.body.innerHTML + "<h4> Something went wrong </h4>"
+                    // console.log(error)
+                });
+
+
+
+
+
+            // for (let i = 0; i < localStorage.length; i++) {
+
+            //     const obj = JSON.parse(localStorage.getItem(localStorage.key(i)))
+            //     console.log(obj,localStorage.length,localStorage);
+            //     showUserOnScreen(obj, parentItem);
+            // }
+        }
+
+
+        // localStorage.setItem(obj.email, JSON.stringify(obj));
+        // showUserOnScreen(obj);
+
+        function showUserOnScreen(obj) {
+            const items = document.getElementById('itemList');
+            const li = document.createElement('li');
+
+            li.textContent = obj.name + " - " + obj.email;
+            items.appendChild(li);
+
+            const editBtn = document.createElement('input')
+            editBtn.type = 'button';
+            editBtn.value = 'Edit';
+            editBtn.onclick = () => {
+                items.removeChild(li);
+                localStorage.removeItem(obj.email);
+                editBtn.remove();
+                deleteBtn.remove();
+
+                const name = document.getElementById('fullname').value = obj.name;
+                const email = document.getElementById('email').value = obj.email;
+                const phone = document.getElementById('phone').value = obj.phone;
+
+
+            }
+            items.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('input')
+            deleteBtn.type = 'button';
+            deleteBtn.value = 'delete'
+            deleteBtn.onclick = () => {
+                items.removeChild(li);
+                localStorage.removeItem(obj.email);
+                deleteBtn.remove();
+                editBtn.remove();
+            }
+            items.appendChild(deleteBtn);
+
+        }
+
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
